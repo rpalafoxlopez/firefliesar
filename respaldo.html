@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>✨ Las Pléyades (M45) - Cúmulo Abierto</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --gold: #FFD700;
+      --gold-soft: #FFA500;
+      --blue-deep: #0a0a1a;
+      --error-red: #ff3333;
+      --glitch-cyan: #00ffff;
+      --glitch-magenta: #ff00ff;
+    }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(74, 59, 106, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(26, 26, 58, 0.6) 0%, transparent 50%),
+        linear-gradient(to bottom, var(--blue-deep) 0%, #050510 100%);
+      min-height: 100vh;
+      color: #e0e0ff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ===== LOADER EPICO ===== */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease-out, visibility 1s ease-out;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Scanlines */
+    .loader-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 255, 0.03) 2px,
+        rgba(0, 255, 255, 0.03) 4px
+      );
+      pointer-events: none;
+      animation: scanline-move 8s linear infinite;
+    }
+
+    @keyframes scanline-move {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100vh); }
+    }
+
+    /* Mensaje principal con glitch */
+    .loader-message {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(1.5rem, 5vw, 3.5rem);
+      color: var(--error-red);
+      text-align: center;
+      max-width: 90%;
+      line-height: 1.3;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      position: relative;
+      animation: glitch-text 2s infinite;
+      text-shadow: 
+        2px 2px 0px rgba(255, 0, 0, 0.5),
+        -2px -2px 0px rgba(0, 255, 255, 0.5);
+    }
+
+    .loader-message .line1 {
+      display: block;
+      font-size: 0.5em;
+      color: #666;
+      margin-bottom: 20px;
+      letter-spacing: 8px;
+    }
+
+    .loader-message .line2 {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .loader-message .line3 {
+      display: block;
+      font-size: 0.6em;
+      color: var(--glitch-cyan);
+      letter-spacing: 2px;
+    }
+
+    @keyframes glitch-text {
+      0%, 90%, 100% { 
+        text-shadow: 
+          2px 2px 0px rgba(255, 0, 0, 0.5),
+          -2px -2px 0px rgba(0, 255, 255, 0.5);
+        transform: translate(0);
+      }
+      92% { 
+        text-shadow: 
+          -3px 3px 0px rgba(255, 0, 0, 0.8),
+          3px -3px 0px rgba(0, 255, 255, 0.8);
+        transform: translate(2px, -2px);
+      }
+      94% { 
+        text-shadow: 
+          3px -3px 0px rgba(255, 0, 0, 0.8),
+          -3px 3px 0px rgba(0, 255, 255, 0.8);
+        transform: translate(-2px, 2px);
+      }
+      96% { 
+        text-shadow: 
+          -2px -2px 0px rgba(255, 0, 0, 0.5),
+          2px 2px 0px rgba(0, 255, 255, 0.5);
+        transform: translate(0);
+      }
+    }
+
+    /* Barra de progreso */
+    .loader-progress-container {
+      width: 80%;
+      max-width: 600px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 60px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--error-red), var(--gold), var(--glitch-cyan));
+      border-radius: 2px;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 20px var(--error-red);
+      position: relative;
+    }
+
+    .loader-progress-bar::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #fff, 0 0 40px var(--error-red);
+    }
+
+    /* Porcentaje */
+    .loader-percentage {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 3rem;
+      color: var(--gold);
+      margin-top: 30px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Mensajes de estado */
+    .loader-status {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 20px;
+      height: 20px;
+      text-align: center;
+    }
+
+    .loader-status .typing {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--glitch-cyan);
+      animation: typing 1s steps(20) infinite alternate;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    /* Efecto de partículas en loader */
+    .loader-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .loader-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--error-red);
+      border-radius: 50%;
+      animation: particle-float 3s ease-in-out infinite;
+    }
+
+    @keyframes particle-float {
+      0%, 100% { 
+        transform: translateY(100vh) scale(0); 
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { 
+        transform: translateY(-100vh) scale(1); 
+        opacity: 0;
+      }
+    }
+
+    /* Contador regresivo */
+    .loader-timer {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      color: #333;
+      margin-top: 40px;
+      letter-spacing: 2px;
+    }
+
+    .loader-timer span {
+      color: var(--error-red);
+      font-size: 1.5rem;
+    }
+
+    /* ===== RESTO DEL DISEÑO ===== */
+    .nebula-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+      background: 
+        radial-gradient(ellipse at 30% 70%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
+        radial-gradient(ellipse at 70% 30%, rgba(0, 191, 255, 0.1) 0%, transparent 40%);
+      animation: nebula-drift 20s ease-in-out infinite;
+    }
+
+    @keyframes nebula-drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(2%, -1%) scale(1.02); }
+      66% { transform: translate(-1%, 2%) scale(0.98); }
+    }
+
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--duration) ease-in-out infinite;
+    }
+
+    .star.bright { box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8); }
+    .star.gold { 
+      background: var(--gold); 
+      box-shadow: 0 0 15px 3px rgba(255, 215, 0, 0.6); 
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    header {
+      text-align: center;
+      padding: 50px 20px 30px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--gold);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 30%, #FFEC8B 50%, #FFA500 70%, #FFD700 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
+      margin-bottom: 15px;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+
+    header p {
+      color: #8899aa;
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 30px;
+      padding: 20px 40px 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+    }
+
+    .viewer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .viewer-3d {
+      height: 600px;
+      background: #000;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 215, 0, 0.2);
+      box-shadow: 
+        0 0 60px rgba(100, 150, 255, 0.2),
+        inset 0 0 100px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .viewer-3d iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .stars-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .star-label {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      animation: label-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes label-pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .star-label::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle, #fff 0%, transparent 70%);
+      border-radius: 50%;
+      box-shadow: 0 0 20px 5px currentColor;
+    }
+
+    .star-label::after {
+      content: '';
+      width: 1px;
+      height: 20px;
+      background: linear-gradient(to bottom, currentColor, transparent);
+      opacity: 0.6;
+    }
+
+    .star-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+      white-space: nowrap;
+      letter-spacing: 1px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid currentColor;
+      backdrop-filter: blur(4px);
+    }
+
+    .star-mag {
+      font-size: 0.65rem;
+      color: #ccc;
+      text-shadow: 0 0 5px rgba(0,0,0,0.8);
+    }
+
+    .star-alcyone { top: 35%; left: 48%; color: #9CAFD6; animation-delay: 0s; }
+    .star-atlas { top: 20%; left: 42%; color: #AAB6E8; animation-delay: 0.2s; }
+    .star-electra { top: 25%; left: 55%; color: #B4C5E8; animation-delay: 0.4s; }
+    .star-maia { top: 45%; left: 38%; color: #AABFF0; animation-delay: 0.6s; }
+    .star-merope { top: 55%; left: 60%; color: #9FB4E8; animation-delay: 0.8s; }
+    .star-taygeta { top: 15%; left: 58%; color: #B0C0F0; animation-delay: 1s; }
+    .star-pleione { top: 28%; left: 46%; color: #A8B8E8; animation-delay: 1.2s; }
+    .star-celaeno { top: 40%; left: 33%; color: #C4D0F0; animation-delay: 1.4s; }
+
+    .viewer-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #aabbcc;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: rgba(255, 215, 0, 0.4);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .toggle-labels {
+      background: rgba(74, 144, 217, 0.2);
+      border-color: rgba(74, 144, 217, 0.4);
+      color: #6ab0f9;
+    }
+
+    .toggle-labels:hover {
+      background: rgba(74, 144, 217, 0.3);
+      border-color: #6ab0f9;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .leyenda-card {
+      background: rgba(15, 15, 35, 0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .leyenda-card h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .estrella-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 0 -8px;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .estrella-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+
+    .estrella-item:last-child { border-bottom: none; }
+
+    .estrella-color {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      box-shadow: 0 0 15px currentColor;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .estrella-color::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 8px white;
+    }
+
+    .estrella-info { flex: 1; }
+
+    .estrella-nombre {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .estrella-dato {
+      font-size: 0.75rem;
+      color: #7788aa;
+      margin-top: 2px;
+    }
+
+    .estrella-magnitud {
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 1rem;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(15, 15, 35, 0.6) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(74, 144, 217, 0.2);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to bottom, #4A90D9, #6ab0f9);
+    }
+
+    .info-box h3 {
+      color: #6ab0f9;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.7rem;
+      color: #667799;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 0.95rem;
+      color: #ccddee;
+      font-weight: 600;
+    }
+
+    .music-btn {
+      position: fixed;
+      top: 25px;
+      right: 25px;
+      z-index: 100;
+      background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 8px 30px rgba(29, 185, 84, 0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 12px 40px rgba(29, 185, 84, 0.5);
+    }
+
+    .spotify-card {
+      position: fixed;
+      top: 75px;
+      right: 25px;
+      z-index: 100;
+      display: none;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 15px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .close-spotify {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-spotify:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 30px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    footer p {
+      color: #667799;
+      font-size: 1rem;
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    .footer-stars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 30px 15px 20px; }
+      header h1 { font-size: 2rem; }
+
+      .main-container { 
+        grid-template-columns: 1fr; 
+        padding: 15px;
+        gap: 20px;
+      }
+
+      .viewer-3d { height: 400px; }
+
+      .star-label .star-name {
+        font-size: 0.6rem;
+        padding: 2px 6px;
+      }
+
+      .star-label::after { height: 12px; }
+
+      .leyenda-card { padding: 20px; }
+
+      .info-grid { grid-template-columns: 1fr; }
+
+      .music-btn {
+        top: 15px;
+        right: 15px;
+        padding: 10px 15px;
+        font-size: 0.8rem;
+      }
+
+      .spotify-card {
+        right: 15px;
+        left: 15px;
+        width: auto;
+      }
+
+      .spotify-card iframe { width: 100% !important; }
+
+      .loader-message { font-size: 1.2rem; }
+      .loader-percentage { font-size: 2rem; }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 0, 255, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .stars-overlay { display: none; }
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+
+  <!-- ===== LOADER EPICO ===== -->
+  <div class="loader-container" id="loaderContainer">
+    <div class="loader-particles" id="loaderParticles"></div>
+
+    <div class="loader-message">
+      <span class="line1">[ERROR: REALIDAD_AUMENTADA_NO_ENCONTRADA]</span>
+      <span class="line2">ESTO TENIA QUE SER UN <a href="./index.html" style="color:transparent !important;text-decoration:none !important;">MODELO AR</a></span>
+      <span class="line2">PERO ALGO FALLO CRUELMENTE </span>
+      <span class="line3">>> INICIANDO PROTOCOLO DE CONTINGENCIA_3D...</span>
+    </div>
+
+    <div class="loader-progress-container">
+      <div class="loader-progress-bar" id="loaderProgressBar"></div>
+    </div>
+
+    <div class="loader-percentage" id="loaderPercentage">0%</div>
+
+    <div class="loader-status" id="loaderStatus">
+      <span class="typing">Cargando universo alternativo...</span>
+    </div>
+
+    <div class="loader-timer">
+      Tiempo restante: <span id="loaderTimer">20</span>s
+    </div>
+  </div>
+
+  <!-- Nebulosa -->
+  <div class="nebula-bg"></div>
+
+  <!-- Estrellas -->
+  <div class="stars-container" id="starsContainer"></div>
+
+  <!-- 
+  <button class="music-btn" id="musicBtn">
+    <span>🎵</span>
+    <span>Ambiente</span>
+  </button> Botón Música -->
+
+  <div class="spotify-card" id="spotifyCard">
+    <button class="close-spotify" id="closeSpotifyBtn">✕</button>
+    <iframe
+      src="https://open.spotify.com/embed/track/3DcuuQFpNq7y8MiCjJtNO5?utm_source=generator"
+      width="300"
+      height="152"
+      frameBorder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-badge">✨ Objeto Messier 45</div>
+    <h1>Las Pléyades</h1>
+    <p>Cúmulo abierto en Tauro • ~444 años luz • ~100 millones de años de edad</p>
+  </header>
+
+  <!-- Contenedor principal -->
+  <div class="main-container">
+
+    <!-- Visor 3D -->
+    <div class="viewer-section">
+      <div class="viewer-3d" id="viewer3d">
+        <iframe 
+          title="Pleyades" 
+          frameborder="0" 
+          allowfullscreen 
+          mozallowfullscreen="true" 
+          webkitallowfullscreen="true" 
+          allow="autoplay; fullscreen; xr-spatial-tracking" 
+          xr-spatial-tracking 
+          execution-while-out-of-viewport 
+          execution-while-not-rendered 
+          web-share 
+          src="https://sketchfab.com/models/29d482940b6e4e75b4a807b736680a3e/embed?autostart=1&preload=1&ui_infos=0&ui_controls=1&ui_stop=0&ui_inspector=0&ui_watermark=0&ui_watermark_link=0&ui_ar=0&ui_help=0&ui_settings=0&ui_vr=0&ui_fullscreen=1&ui_annotations=0&ui_theme=dark"
+          style="width: 100%; height: 100%;">
+        </iframe>
+
+        <div class="stars-overlay" id="starsOverlay">
+          <div class="star-label star-alcyone">
+            <span class="star-name">Alcyone</span>
+            <span class="star-mag">2.87</span>
+          </div>
+          <div class="star-label star-atlas">
+            <span class="star-name">Atlas</span>
+            <span class="star-mag">3.62</span>
+          </div>
+          <div class="star-label star-electra">
+            <span class="star-name">Electra</span>
+            <span class="star-mag">3.70</span>
+          </div>
+          <div class="star-label star-maia">
+            <span class="star-name">Maia</span>
+            <span class="star-mag">3.87</span>
+          </div>
+          <div class="star-label star-merope">
+            <span class="star-name">Merope</span>
+            <span class="star-mag">4.18</span>
+          </div>
+          <div class="star-label star-taygeta">
+            <span class="star-name">Taygeta</span>
+            <span class="star-mag">4.30</span>
+          </div>
+          <div class="star-label star-pleione">
+            <span class="star-name">Pleione</span>
+            <span class="star-mag">5.05</span>
+          </div>
+          <div class="star-label star-celaeno">
+            <span class="star-name">Celaeno</span>
+            <span class="star-mag">5.46</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="viewer-controls">
+        <button class="control-btn toggle-labels" onclick="toggleLabels()">
+          👁️ Mostrar/Ocultar Nombres
+        </button>
+        <button class="control-btn" onclick="resetView()">
+          🔄 Reiniciar Vista
+        </button>
+        <button class="control-btn" onclick="toggleFullscreen()">
+          ⛶ Pantalla Completa
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="leyenda-card">
+        <h2>⭐ Estrellas Principales</h2>
+
+        <div class="estrella-item" onclick="highlightStar('alcyone')">
+          <div class="estrella-color" style="background: #9CAFD6; color: #9CAFD6;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Alcyone (η Tau)</div>
+            <div class="estrella-dato">La más brillante del cúmulo</div>
+          </div>
+          <div class="estrella-magnitud">2.87</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('atlas')">
+          <div class="estrella-color" style="background: #AAB6E8; color: #AAB6E8;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Atlas (27 Tau)</div>
+            <div class="estrella-dato">Padre de las Pléyades</div>
+          </div>
+          <div class="estrella-magnitud">3.62</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('electra')">
+          <div class="estrella-color" style="background: #B4C5E8; color: #B4C5E8;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Electra (17 Tau)</div>
+            <div class="estrella-dato">Tercera más brillante</div>
+          </div>
+          <div class="estrella-magnitud">3.70</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('maia')">
+          <div class="estrella-color" style="background: #AABFF0; color: #AABFF0;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Maia (20 Tau)</div>
+            <div class="estrella-dato">Cuarta más brillante</div>
+          </div>
+          <div class="estrella-magnitud">3.87</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('merope')">
+          <div class="estrella-color" style="background: #9FB4E8; color: #9FB4E8;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Merope (23 Tau)</div>
+            <div class="estrella-dato">Nebulosa alrededor</div>
+          </div>
+          <div class="estrella-magnitud">4.18</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('taygeta')">
+          <div class="estrella-color" style="background: #B0C0F0; color: #B0C0F0;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Taygeta (19 Tau)</div>
+            <div class="estrella-dato">Sistema binario</div>
+          </div>
+          <div class="estrella-magnitud">4.30</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('pleione')">
+          <div class="estrella-color" style="background: #A8B8E8; color: #A8B8E8;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Pleione (28 Tau)</div>
+            <div class="estrella-dato">Madre de las Pléyades</div>
+          </div>
+          <div class="estrella-magnitud">5.05</div>
+        </div>
+
+        <div class="estrella-item" onclick="highlightStar('celaeno')">
+          <div class="estrella-color" style="background: #C4D0F0; color: #C4D0F0;"></div>
+          <div class="estrella-info">
+            <div class="estrella-nombre">Celaeno (16 Tau)</div>
+            <div class="estrella-dato">La más tenue visible</div>
+          </div>
+          <div class="estrella-magnitud">5.46</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h3>📡 Datos del Cúmulo</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Distancia</span>
+            <span class="info-value">~444 años luz</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Edad</span>
+            <span class="info-value">~100 millones años</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Diámetro</span>
+            <span class="info-value">~13 años luz</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Estrellas</span>
+            <span class="info-value">+1000 identificadas</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Movimiento</span>
+            <span class="info-value">Hacia Orión</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Constelación</span>
+            <span class="info-value">Tauro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-stars">✨ ⭐ ✨ ⭐ ✨</div>
+      <p>Las Pléyades, también conocidas como las Siete Hermanas o Messier 45, han fascinado a la humanidad desde la antigüedad. Visibles a simple vista en el cielo nocturno, representan uno de los objetos celestes más estudiados y fotografiados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ===== LOADER EPICO =====
+    const loaderContainer = document.getElementById('loaderContainer');
+    const loaderProgressBar = document.getElementById('loaderProgressBar');
+    const loaderPercentage = document.getElementById('loaderPercentage');
+    const loaderTimer = document.getElementById('loaderTimer');
+    const loaderStatus = document.getElementById('loaderStatus');
+    const loaderParticles = document.getElementById('loaderParticles');
+
+    // Mensajes de estado aleatorios
+    const statusMessages = [
+      'Cargando universo alternativo...',
+      'Renderizando estrellas...',
+      'Compilando nebulosas...',
+      'Conectando con el cosmos...',
+      'Descargando luz de 444 años luz...',
+      'Calibrando telescopio virtual...',
+      'Generando polvo estelar...',
+      'Sincronizando con Messier 45...',
+      'Activando modo espectacular...',
+      'Casi listo... bueno, no tanto...'
+    ];
+
+    // Crear partículas del loader
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'loader-particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 3 + 's';
+      particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      loaderParticles.appendChild(particle);
+    }
+
+    // Animación del loader
+    let progress = 0;
+    const totalTime = 20000; // 20 segundos
+    const interval = 100; // actualizar cada 100ms
+    const increment = 100 / (totalTime / interval);
+    let messageIndex = 0;
+
+    const loaderInterval = setInterval(() => {
+      progress += increment;
+
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(loaderInterval);
+
+        // Mensaje final
+        loaderStatus.innerHTML = '<span style="color: #00ff00;">✓ PROTOCOLO DE CONTINGENCIA ACTIVADO</span>';
+        loaderPercentage.textContent = '100%';
+        loaderProgressBar.style.width = '100%';
+
+        // Ocultar loader después de 1 segundo
+        setTimeout(() => {
+          loaderContainer.classList.add('hidden');
+        }, 1000);
+      } else {
+        // Actualizar barra y porcentaje
+        loaderProgressBar.style.width = progress + '%';
+        loaderPercentage.textContent = Math.floor(progress) + '%';
+
+        // Actualizar timer
+        const remaining = Math.ceil((100 - progress) / 100 * 20);
+        loaderTimer.textContent = remaining;
+
+        // Cambiar mensaje cada 2 segundos
+        if (Math.floor(progress) % 20 === 0 && messageIndex < statusMessages.length) {
+          loaderStatus.innerHTML = `<span class="typing">${statusMessages[messageIndex]}</span>`;
+          messageIndex++;
+        }
+      }
+    }, interval);
+
+    // ===== ESTRELLAS DE FONDO =====
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      const starCount = 100;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+
+        const rand = Math.random();
+        if (rand > 0.95) star.classList.add('gold');
+        else if (rand > 0.8) star.classList.add('bright');
+
+        const size = Math.random() * 2 + 1;
+        star.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          --duration: ${Math.random() * 3 + 2}s;
+          animation-delay: ${Math.random() * 5}s;
+        `;
+
+        container.appendChild(star);
+      }
+    }
+
+    createStars();
+
+    // ===== BOTÓN MÚSICA =====
+    const musicBtn = document.getElementById('musicBtn');
+    const spotifyCard = document.getElementById('spotifyCard');
+    const closeSpotifyBtn = document.getElementById('closeSpotifyBtn');
+
+    musicBtn.addEventListener('click', () => {
+      spotifyCard.style.display = 'block';
+      musicBtn.style.display = 'none';
+    });
+
+    closeSpotifyBtn.addEventListener('click', () => {
+      spotifyCard.style.display = 'none';
+      musicBtn.style.display = 'flex';
+    });
+
+    // ===== CONTROLES DEL VISOR =====
+    let labelsVisible = true;
+    function toggleLabels() {
+      const overlay = document.getElementById('starsOverlay');
+      labelsVisible = !labelsVisible;
+      overlay.style.opacity = labelsVisible ? '1' : '0';
+      overlay.style.transition = 'opacity 0.3s';
+    }
+
+    function resetView() {
+      const iframe = document.querySelector('.viewer-3d iframe');
+      iframe.src = iframe.src;
+    }
+
+    function toggleFullscreen() {
+      const viewer = document.getElementById('viewer3d');
+      if (!document.fullscreenElement) {
+        viewer.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function highlightStar(starName) {
+      if (!labelsVisible) toggleLabels();
+
+      const label = document.querySelector('.star-' + starName);
+      if (label) {
+        label.style.transform = 'scale(1.3)';
+        label.style.zIndex = '100';
+        setTimeout(() => {
+          label.style.transform = '';
+          label.style.zIndex = '';
+        }, 1000);
+      }
+    }
+
+    // Parallax
+    document.addEventListener('mousemove', (e) => {
+      const stars = document.querySelectorAll('.star');
+      const x = (e.clientX / window.innerWidth - 0.5) * 0.5;
+      const y = (e.clientY / window.innerHeight - 0.5) * 0.5;
+
+      stars.forEach((star, index) => {
+        if (index % 5 === 0) {
+          const speed = parseFloat(star.style.width) * 0.5;
+          star.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+        }
+      });
+    });
+
+    // Animación de entrada
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.estrella-item, .info-box').forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = `all 0.6s ease ${index * 0.1}s`;
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>

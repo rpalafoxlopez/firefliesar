@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>✨ AR Pléyades con MindAR ✨</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+    }
+
+    /* Forzar pantalla completa para el canvas de A-Frame */
+    a-scene {
+      width: 100vw !important;
+      height: 100vh !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+    }
+
+    #info {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      background: rgba(20, 0, 30, 0.75);
+      color: #ffb6e6;
+      padding: 10px 20px;
+      font-size: 14px;
+      z-index: 100;
+      pointer-events: none;
+      backdrop-filter: blur(8px);
+      border-radius: 40px;
+      margin: 0 20px;
+      border: 1px solid rgba(255, 105, 180, 0.3);
+      box-shadow: 0 0 15px rgba(255, 20, 147, 0.2);
+    }
+
+    #scan-status {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      background: rgba(20, 0, 30, 0.65);
+      color: #ff69b4;
+      padding: 8px 15px;
+      font-size: 13px;
+      z-index: 100;
+      font-family: monospace;
+      border-radius: 20px;
+      margin: 0 20px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 105, 180, 0.25);
+      box-shadow: 0 0 10px rgba(255, 20, 147, 0.15);
+    }
+
+    .music-btn {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      z-index: 101;
+      background: linear-gradient(135deg, #ff1493, #ff69b4);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+    }
+
+    .spotify-card {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      z-index: 101;
+      display: none;
+      background: rgba(20, 0, 30, 0.9);
+      padding: 10px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 105, 180, 0.3);
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
+    }
+
+    .close-spotify {
+      background: rgba(255, 105, 180, 0.2);
+      border: none;
+      color: #ffb6e6;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+
+    .close-spotify:hover {
+      background: rgba(255, 105, 180, 0.4);
+    }
+
+    /* Botón de respaldo cuando AR falla */
+    #fallback-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0014 0%, #1a0033 40%, #330033 70%, #1a001a 100%);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #fallback-container h2 {
+      font-size: 28px;
+      margin-bottom: 15px;
+      color: #ff69b4;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+    }
+
+    #fallback-container p {
+      font-size: 16px;
+      margin-bottom: 30px;
+      max-width: 400px;
+      line-height: 1.6;
+      opacity: 0.9;
+      color: #e0b0d0;
+    }
+
+    .fallback-btn {
+      background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #da70d6 100%);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(255, 20, 147, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .fallback-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 20, 147, 0.7);
+    }
+
+    #error-details {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #ff6b9d;
+      font-family: monospace;
+      max-width: 80%;
+      word-break: break-word;
+    }
+
+    /* Loading spinner */
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff69b4;
+      font-size: 18px;
+      z-index: 50;
+      background: rgba(10, 0, 20, 0.85);
+      padding: 25px 35px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(255, 105, 180, 0.3);
+      box-shadow: 0 0 30px rgba(255, 20, 147, 0.2);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 105, 180, 0.2);
+      border-top: 4px solid #ff69b4;
+      border-right: 4px solid #da70d6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Estrellas decorativas de fondo en fallback */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+  </style>
+
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<base target="_blank">
+</head>
+<body>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <span>Iniciando AR...</span>
+  </div>
+
+  <div id="scan-status" style="display: none;">📷 Esperando detección...</div>
+
+  <button class="music-btn" id="musicBtn" style="display: none;">🎵 Música</button>
+
+  <div class="spotify-card" id="spotifyCard">
+    <button class="close-spotify" id="closeSpotifyBtn">✕</button>
+    <iframe
+      src="https://open.spotify.com/embed/track/3DcuuQFpNq7y8MiCjJtNO5?utm_source=generator"
+      width="280"
+      height="152"
+      frameBorder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
+  </div>
+
+  <div id="info" style="display: none;">
+    🔍 Apunta a tu postal → Aparecerán las Pléyades ✨
+  </div>
+
+  <!-- Contenedor de respaldo -->
+  <div id="fallback-container">
+    <h2>⚠️ No se pudo iniciar AR</h2>
+    <p>Tu dispositivo o navegador no soporta la experiencia de Realidad Aumentada, o hubo un problema al cargar el marcador.</p>
+    <a href="respaldo.html" class="fallback-btn">Ver versión de respaldo</a>
+    <div id="error-details"></div>
+  </div>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./postal.mind; autoInitialize: true; maxTrack: 1; uiLoading: no; uiScanning: no; uiError: no;"
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true; alpha: true; colorManagement: true;"
+    device-orientation-permission-ui="enabled: false"
+    embedded
+    style="width: 100vw; height: 100vh;"
+  >
+    <a-assets>
+      <a-asset-item id="pleyadesModel" src="https://ar-models.s3.us-east-2.amazonaws.com/pleyades/pleyades_m45.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Cámara corregida: posición 0 0 0 y look-controls desactivados -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <a-entity mindar-image-target="targetIndex: 0">
+      <!-- Modelo 3D de las Pléyades (M45) -->
+      <a-gltf-model
+        src="#pleyadesModel"
+        scale="0.5 0.5 0.5"
+        position="0 0.2 0"
+        rotation="-90 0 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear"
+      ></a-gltf-model>
+
+      <!-- Texto flotante -->
+      <a-text
+        value="✨ PLÉYADES (M45) ✨"
+        position="0 1 0"
+        align="center"
+        scale="1.2 1.2 1.2"
+        color="#ff69b4"
+        background="true"
+        background-opacity="0.5"
+        font="mozillavr"
+      ></a-text>
+
+      <!-- Partículas/estrellas brillantes alrededor -->
+      <a-sphere radius="0.05" color="#fff" position="0.3 0.3 0.2" material="emissive: #ff69b4; emissiveIntensity: 0.9"></a-sphere>
+      <a-sphere radius="0.04" color="#ffb6e6" position="-0.25 0.4 -0.15" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.06" color="#ff1493" position="0.2 0.6 0.25" material="emissive: #ff1493; emissiveIntensity: 1"></a-sphere>
+      <a-sphere radius="0.03" color="#fff" position="-0.15 0.15 0.4" material="emissive: #ffb6e6; emissiveIntensity: 0.7"></a-sphere>
+      <a-sphere radius="0.05" color="#dda0dd" position="0.1 -0.1 0.45" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.04" color="#fff" position="-0.3 0.25 -0.2" material="emissive: #ff69b4; emissiveIntensity: 0.85"></a-sphere>
+      <a-sphere radius="0.035" color="#ffb6e6" position="0.35 -0.05 -0.25" material="emissive: #ff69b4; emissiveIntensity: 0.75"></a-sphere>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const musicBtn = document.getElementById('musicBtn');
+    const spotifyCard = document.getElementById('spotifyCard');
+    const closeSpotifyBtn = document.getElementById('closeSpotifyBtn');
+    const statusDiv = document.getElementById('scan-status');
+    const loadingDiv = document.getElementById('loading');
+    const infoDiv = document.getElementById('info');
+    const fallbackContainer = document.getElementById('fallback-container');
+    const errorDetails = document.getElementById('error-details');
+
+    let arInitialized = false;
+    let errorTimeout;
+
+    // Crear estrellas decorativas en el fallback
+    function createStars() {
+      for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.height = star.style.width;
+        star.style.animationDelay = Math.random() * 2 + 's';
+        star.style.opacity = Math.random() * 0.7 + 0.3;
+        fallbackContainer.appendChild(star);
+      }
+    }
+
+    // Mostrar respaldo después de 15 segundos si AR no inicia
+    function showFallback(errorMsg) {
+      loadingDiv.style.display = 'none';
+      fallbackContainer.style.display = 'flex';
+      createStars();
+      if (errorMsg) {
+        errorDetails.textContent = 'Error: ' + errorMsg;
+      }
+    }
+
+    // Configurar timeout de seguridad
+    errorTimeout = setTimeout(() => {
+      if (!arInitialized) {
+        showFallback('Timeout: El AR no pudo inicializarse en 15 segundos. Verifica que el archivo postal.mind existe y que tienes cámara disponible.');
+      }
+    }, 15000);
+
+    // Verificar si el archivo .mind existe
+    fetch('./postal.mind', { method: 'HEAD' })
+      .then(response => {
+        if (!response.ok) {
+          clearTimeout(errorTimeout);
+          showFallback('No se encontró el archivo postal.mind. Asegúrate de que esté en la misma carpeta que este HTML.');
+        }
+      })
+      .catch(() => {
+        console.warn('No se pudo verificar postal.mind');
+      });
+
+    musicBtn.addEventListener('click', () => {
+      spotifyCard.style.display = 'block';
+      musicBtn.style.display = 'none';
+    });
+
+    closeSpotifyBtn.addEventListener('click', () => {
+      spotifyCard.style.display = 'none';
+      musicBtn.style.display = 'block';
+    });
+
+    const scene = document.querySelector('a-scene');
+
+    // Evento cuando AR está listo
+    scene.addEventListener('arReady', (e) => {
+      arInitialized = true;
+      clearTimeout(errorTimeout);
+      loadingDiv.style.display = 'none';
+      statusDiv.style.display = 'block';
+      infoDiv.style.display = 'block';
+      musicBtn.style.display = 'block';
+      console.log('MindAR está listo');
+    });
+
+    // Evento de error en AR
+    scene.addEventListener('arError', (e) => {
+      clearTimeout(errorTimeout);
+      console.error('Error de AR:', e);
+      showFallback('Error en MindAR: ' + (e.detail || 'No se pudo acceder a la cámara o cargar el marcador.'));
+    });
+
+    // Eventos de detección de target
+    scene.addEventListener('mindar-image-target-found', (e) => {
+      statusDiv.innerHTML = '✅ ¡POSTAL DETECTADA! ✨';
+      statusDiv.style.background = 'rgba(50, 0, 50, 0.8)';
+      statusDiv.style.color = '#ff69b4';
+      statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.5)';
+    });
+
+    scene.addEventListener('mindar-image-target-lost', (e) => {
+      statusDiv.innerHTML = '🔍 Buscando postal...';
+      statusDiv.style.background = 'rgba(20, 0, 30, 0.65)';
+      statusDiv.style.color = '#ff69b4';
+      statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.25)';
+    });
+
+    // Fallback adicional: detectar si la escena no carga en 10 segundos
+    setTimeout(() => {
+      if (loadingDiv.style.display !== 'none' && !arInitialized) {
+        const canvas = document.querySelector('a-scene canvas');
+        if (!canvas) {
+          showFallback('No se pudo renderizar la escena 3D. Tu navegador podría no soportar WebGL.');
+        }
+      }
+    }, 10000);
+  </script>
+</body>
+</html>
