@@ -13,7 +13,6 @@
       background: #000;
     }
 
-    /* Forzar pantalla completa para el canvas de A-Frame */
     a-scene {
       width: 100vw !important;
       height: 100vh !important;
@@ -112,13 +111,125 @@
       background: rgba(255, 105, 180, 0.4);
     }
 
-    /* Botón de respaldo cuando AR falla */
+    /* ===== MARCO DE ESCANEO ANIMADO ===== */
+    .scan-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 95;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scan-frame {
+      width: 260px;
+      height: 260px;
+      position: relative;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .scan-frame.active {
+      opacity: 1;
+    }
+
+    /* Esquinas del marco */
+    .scan-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #ff69b4;
+    }
+    .scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 15px 0 0 0; }
+    .scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 15px 0 0; }
+    .scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 15px; }
+    .scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 15px 0; }
+
+    /* Línea de escaneo */
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      width: 80%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ff1493, #ff69b4, #ff1493, transparent);
+      box-shadow: 0 0 15px #ff1493, 0 0 30px rgba(255, 20, 147, 0.5);
+      animation: scanMove 2.5s ease-in-out infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes scanMove {
+      0%, 100% { top: 5%; opacity: 0.6; }
+      50% { top: 95%; opacity: 1; }
+    }
+
+    /* Puntos de esquina animados */
+    .scan-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ff1493;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff1493;
+      animation: dotPulse 1.5s ease-in-out infinite;
+    }
+    .scan-dot.tl { top: -4px; left: -4px; }
+    .scan-dot.tr { top: -4px; right: -4px; animation-delay: 0.3s; }
+    .scan-dot.bl { bottom: -4px; left: -4px; animation-delay: 0.6s; }
+    .scan-dot.br { bottom: -4px; right: -4px; animation-delay: 0.9s; }
+
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+
+    /* Texto dentro del marco */
+    .scan-text {
+      position: absolute;
+      bottom: -35px;
+      left: 0; right: 0;
+      text-align: center;
+      color: #ff69b4;
+      font-size: 13px;
+      font-family: monospace;
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      animation: textFade 2s ease-in-out infinite;
+    }
+
+    @keyframes textFade {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== BOTÓN MODO WEB (accesible siempre) ===== */
+    .web-mode-btn {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      z-index: 101;
+      background: rgba(20, 0, 30, 0.7);
+      color: #ffb6e6;
+      border: 1px solid rgba(255, 105, 180, 0.4);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+    }
+    .web-mode-btn:hover {
+      background: rgba(255, 105, 180, 0.2);
+      border-color: #ff69b4;
+    }
+
+    /* ===== CONTENEDOR DE RESPALDO ===== */
     #fallback-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: linear-gradient(135deg, #0a0014 0%, #1a0033 40%, #330033 70%, #1a001a 100%);
       display: none;
       flex-direction: column;
@@ -175,11 +286,10 @@
       word-break: break-word;
     }
 
-    /* Loading spinner */
+    /* ===== LOADING ===== */
     #loading {
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       color: #ff69b4;
       font-size: 18px;
@@ -211,7 +321,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Estrellas decorativas de fondo en fallback */
     .star {
       position: absolute;
       background: white;
@@ -222,6 +331,29 @@
     @keyframes twinkle {
       0% { opacity: 0.3; transform: scale(1); }
       100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* ===== DETECTED CHECKMARK ===== */
+    .detected-badge {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 80px; height: 80px;
+      background: rgba(255, 20, 147, 0.9);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 96;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .detected-badge.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .detected-badge span {
+      font-size: 40px;
+      color: white;
     }
   </style>
 
@@ -236,9 +368,28 @@
     <span>Iniciando AR...</span>
   </div>
 
+  <!-- ===== MARCO DE ESCANEO ===== -->
+  <div class="scan-overlay">
+    <div class="scan-frame" id="scanFrame">
+      <div class="scan-corner tl"><div class="scan-dot tl"></div></div>
+      <div class="scan-corner tr"><div class="scan-dot tr"></div></div>
+      <div class="scan-corner bl"><div class="scan-dot bl"></div></div>
+      <div class="scan-corner br"><div class="scan-dot br"></div></div>
+      <div class="scan-line"></div>
+      <div class="scan-text">Apunta tu cámara a la postal</div>
+    </div>
+  </div>
+
+  <!-- Checkmark de detección -->
+  <div class="detected-badge" id="detectedBadge">
+    <span>✓</span>
+  </div>
+
   <div id="scan-status" style="display: none;">📷 Esperando detección...</div>
 
   <button class="music-btn" id="musicBtn" style="display: none;">🎵 Música</button>
+
+  <a href="respaldo.html" class="web-mode-btn">🌐 Modo web</a>
 
   <div class="spotify-card" id="spotifyCard">
     <button class="close-spotify" id="closeSpotifyBtn">✕</button>
@@ -264,7 +415,7 @@
   </div>
 
   <a-scene
-    mindar-image="imageTargetSrc: ./postal.mind; autoInitialize: true; maxTrack: 1; uiLoading: no; uiScanning: no; uiError: no;"
+    mindar-image="imageTargetSrc: ./postal.mind; autoInitialize: true; maxTrack: 3; uiLoading: no; uiScanning: no; uiError: no;"
     vr-mode-ui="enabled: false"
     renderer="antialias: true; alpha: true; colorManagement: true;"
     device-orientation-permission-ui="enabled: false"
@@ -275,11 +426,10 @@
       <a-asset-item id="pleyadesModel" src="https://ar-models.s3.us-east-2.amazonaws.com/pleyades/pleyades_m45.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Cámara corregida: posición 0 0 0 y look-controls desactivados -->
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+    <!-- ===== TARGET 0: Postal principal ===== -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Modelo 3D de las Pléyades (M45) -->
       <a-gltf-model
         src="#pleyadesModel"
         scale="0.5 0.5 0.5"
@@ -287,8 +437,6 @@
         rotation="-90 0 0"
         animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear"
       ></a-gltf-model>
-
-      <!-- Texto flotante -->
       <a-text
         value="✨ PLÉYADES (M45) ✨"
         position="0 1 0"
@@ -299,8 +447,62 @@
         background-opacity="0.5"
         font="mozillavr"
       ></a-text>
+      <a-sphere radius="0.05" color="#fff" position="0.3 0.3 0.2" material="emissive: #ff69b4; emissiveIntensity: 0.9"></a-sphere>
+      <a-sphere radius="0.04" color="#ffb6e6" position="-0.25 0.4 -0.15" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.06" color="#ff1493" position="0.2 0.6 0.25" material="emissive: #ff1493; emissiveIntensity: 1"></a-sphere>
+      <a-sphere radius="0.03" color="#fff" position="-0.15 0.15 0.4" material="emissive: #ffb6e6; emissiveIntensity: 0.7"></a-sphere>
+      <a-sphere radius="0.05" color="#dda0dd" position="0.1 -0.1 0.45" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.04" color="#fff" position="-0.3 0.25 -0.2" material="emissive: #ff69b4; emissiveIntensity: 0.85"></a-sphere>
+      <a-sphere radius="0.035" color="#ffb6e6" position="0.35 -0.05 -0.25" material="emissive: #ff69b4; emissiveIntensity: 0.75"></a-sphere>
+    </a-entity>
 
-      <!-- Partículas/estrellas brillantes alrededor -->
+    <!-- ===== TARGET 1: Variación ángulo (mismo contenido) ===== -->
+    <a-entity mindar-image-target="targetIndex: 1">
+      <a-gltf-model
+        src="#pleyadesModel"
+        scale="0.5 0.5 0.5"
+        position="0 0.2 0"
+        rotation="-90 0 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear"
+      ></a-gltf-model>
+      <a-text
+        value="✨ PLÉYADES (M45) ✨"
+        position="0 1 0"
+        align="center"
+        scale="1.2 1.2 1.2"
+        color="#ff69b4"
+        background="true"
+        background-opacity="0.5"
+        font="mozillavr"
+      ></a-text>
+      <a-sphere radius="0.05" color="#fff" position="0.3 0.3 0.2" material="emissive: #ff69b4; emissiveIntensity: 0.9"></a-sphere>
+      <a-sphere radius="0.04" color="#ffb6e6" position="-0.25 0.4 -0.15" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.06" color="#ff1493" position="0.2 0.6 0.25" material="emissive: #ff1493; emissiveIntensity: 1"></a-sphere>
+      <a-sphere radius="0.03" color="#fff" position="-0.15 0.15 0.4" material="emissive: #ffb6e6; emissiveIntensity: 0.7"></a-sphere>
+      <a-sphere radius="0.05" color="#dda0dd" position="0.1 -0.1 0.45" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
+      <a-sphere radius="0.04" color="#fff" position="-0.3 0.25 -0.2" material="emissive: #ff69b4; emissiveIntensity: 0.85"></a-sphere>
+      <a-sphere radius="0.035" color="#ffb6e6" position="0.35 -0.05 -0.25" material="emissive: #ff69b4; emissiveIntensity: 0.75"></a-sphere>
+    </a-entity>
+
+    <!-- ===== TARGET 2: Variación distancia (mismo contenido) ===== -->
+    <a-entity mindar-image-target="targetIndex: 2">
+      <a-gltf-model
+        src="#pleyadesModel"
+        scale="0.5 0.5 0.5"
+        position="0 0.2 0"
+        rotation="-90 0 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear"
+      ></a-gltf-model>
+      <a-text
+        value="✨ PLÉYADES (M45) ✨"
+        position="0 1 0"
+        align="center"
+        scale="1.2 1.2 1.2"
+        color="#ff69b4"
+        background="true"
+        background-opacity="0.5"
+        font="mozillavr"
+      ></a-text>
       <a-sphere radius="0.05" color="#fff" position="0.3 0.3 0.2" material="emissive: #ff69b4; emissiveIntensity: 0.9"></a-sphere>
       <a-sphere radius="0.04" color="#ffb6e6" position="-0.25 0.4 -0.15" material="emissive: #da70d6; emissiveIntensity: 0.8"></a-sphere>
       <a-sphere radius="0.06" color="#ff1493" position="0.2 0.6 0.25" material="emissive: #ff1493; emissiveIntensity: 1"></a-sphere>
@@ -320,11 +522,21 @@
     const infoDiv = document.getElementById('info');
     const fallbackContainer = document.getElementById('fallback-container');
     const errorDetails = document.getElementById('error-details');
+    const scanFrame = document.getElementById('scanFrame');
+    const detectedBadge = document.getElementById('detectedBadge');
 
     let arInitialized = false;
     let errorTimeout;
+    let detectedTargets = new Set();
 
-    // Crear estrellas decorativas en el fallback
+    function showFallback(errorMsg) {
+      loadingDiv.style.display = 'none';
+      scanFrame.classList.remove('active');
+      fallbackContainer.style.display = 'flex';
+      createStars();
+      if (errorMsg) errorDetails.textContent = 'Error: ' + errorMsg;
+    }
+
     function createStars() {
       for (let i = 0; i < 50; i++) {
         const star = document.createElement('div');
@@ -339,34 +551,20 @@
       }
     }
 
-    // Mostrar respaldo después de 15 segundos si AR no inicia
-    function showFallback(errorMsg) {
-      loadingDiv.style.display = 'none';
-      fallbackContainer.style.display = 'flex';
-      createStars();
-      if (errorMsg) {
-        errorDetails.textContent = 'Error: ' + errorMsg;
-      }
-    }
-
-    // Configurar timeout de seguridad
     errorTimeout = setTimeout(() => {
       if (!arInitialized) {
-        showFallback('Timeout: El AR no pudo inicializarse en 15 segundos. Verifica que el archivo postal.mind existe y que tienes cámara disponible.');
+        showFallback('Timeout: El AR no pudo inicializarse en 15 segundos.');
       }
     }, 15000);
 
-    // Verificar si el archivo .mind existe
     fetch('./postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
           clearTimeout(errorTimeout);
-          showFallback('No se encontró el archivo postal.mind. Asegúrate de que esté en la misma carpeta que este HTML.');
+          showFallback('No se encontró el archivo postal.mind.');
         }
       })
-      .catch(() => {
-        console.warn('No se pudo verificar postal.mind');
-      });
+      .catch(() => console.warn('No se pudo verificar postal.mind'));
 
     musicBtn.addEventListener('click', () => {
       spotifyCard.style.display = 'block';
@@ -380,45 +578,60 @@
 
     const scene = document.querySelector('a-scene');
 
-    // Evento cuando AR está listo
     scene.addEventListener('arReady', (e) => {
       arInitialized = true;
       clearTimeout(errorTimeout);
       loadingDiv.style.display = 'none';
+      scanFrame.classList.add('active');
       statusDiv.style.display = 'block';
       infoDiv.style.display = 'block';
       musicBtn.style.display = 'block';
-      console.log('MindAR está listo');
+      console.log('MindAR listo - maxTrack: 3');
     });
 
-    // Evento de error en AR
     scene.addEventListener('arError', (e) => {
       clearTimeout(errorTimeout);
-      console.error('Error de AR:', e);
-      showFallback('Error en MindAR: ' + (e.detail || 'No se pudo acceder a la cámara o cargar el marcador.'));
+      console.error('Error AR:', e);
+      showFallback('Error en MindAR: ' + (e.detail || 'No se pudo acceder a la cámara.'));
     });
 
-    // Eventos de detección de target
+    // ===== DETECCIÓN DE MÚLTIPLES TARGETS =====
     scene.addEventListener('mindar-image-target-found', (e) => {
-      statusDiv.innerHTML = '✅ ¡POSTAL DETECTADA! ✨';
+      const targetIndex = e.detail.targetIndex;
+      detectedTargets.add(targetIndex);
+
+      // Ocultar marco de escaneo y mostrar checkmark
+      scanFrame.classList.remove('active');
+      detectedBadge.classList.add('show');
+      setTimeout(() => detectedBadge.classList.remove('show'), 1500);
+
+      statusDiv.innerHTML = '✅ ¡POSTAL DETECTADA! (Target ' + targetIndex + ') ✨';
       statusDiv.style.background = 'rgba(50, 0, 50, 0.8)';
       statusDiv.style.color = '#ff69b4';
       statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.5)';
+
+      console.log('Target detectado:', targetIndex, 'Total únicos:', detectedTargets.size);
     });
 
     scene.addEventListener('mindar-image-target-lost', (e) => {
-      statusDiv.innerHTML = '🔍 Buscando postal...';
-      statusDiv.style.background = 'rgba(20, 0, 30, 0.65)';
-      statusDiv.style.color = '#ff69b4';
-      statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.25)';
+      const targetIndex = e.detail.targetIndex;
+      detectedTargets.delete(targetIndex);
+
+      // Si no quedan targets detectados, mostrar marco de escaneo de nuevo
+      if (detectedTargets.size === 0) {
+        scanFrame.classList.add('active');
+        statusDiv.innerHTML = '🔍 Buscando postal...';
+        statusDiv.style.background = 'rgba(20, 0, 30, 0.65)';
+        statusDiv.style.color = '#ff69b4';
+        statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.25)';
+      }
     });
 
-    // Fallback adicional: detectar si la escena no carga en 10 segundos
     setTimeout(() => {
       if (loadingDiv.style.display !== 'none' && !arInitialized) {
         const canvas = document.querySelector('a-scene canvas');
         if (!canvas) {
-          showFallback('No se pudo renderizar la escena 3D. Tu navegador podría no soportar WebGL.');
+          showFallback('No se pudo renderizar la escena 3D. WebGL no soportado.');
         }
       }
     }, 10000);
