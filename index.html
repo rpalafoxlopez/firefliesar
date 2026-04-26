@@ -360,6 +360,7 @@
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -410,7 +411,14 @@
   <div id="fallback-container">
     <h2>⚠️ No se pudo iniciar AR</h2>
     <p>Tu dispositivo o navegador no soporta la experiencia de Realidad Aumentada, o hubo un problema al cargar el marcador.</p>
-    <a href="respaldo.html" class="fallback-btn">Ver versión de respaldo</a>
+    <button class="fallback-btn" id="fallbackRedirectBtn">Ver versión de respaldo</button>
+    <a href="https://wa.me/522223942991?text=Hola%2C%20el%20AR%20de%20Fireflies%20est%C3%A1%20fallando.%20Por%20favor%20ay%C3%BAdame." 
+       class="fallback-btn" 
+       id="whatsappBtn"
+       target="_blank"
+       style="margin-top: 15px; background: linear-gradient(135deg, #25D366, #128C7E);">
+      📱 Contactar por WhatsApp
+    </a>
     <div id="error-details"></div>
   </div>
 
@@ -535,6 +543,27 @@
       fallbackContainer.style.display = 'flex';
       createStars();
       if (errorMsg) errorDetails.textContent = 'Error: ' + errorMsg;
+
+      // Mostrar mensaje de ayuda al usuario
+      const userWantsHelp = confirm(
+        '📸 Ayúdanos a mejorar!\n\n' +
+        'El AR no funcionó en tu dispositivo.\n\n' +
+        '¿Podrías enviar 3 fotos de tu postal en diferentes posiciones ' +
+        '(de frente, inclinada y de cerca) para actualizar el archivo de reconocimiento?\n\n' +
+        'Contacta al desarrollador por WhatsApp con el mensaje: "Esto está fallando"\n\n' +
+        'Presiona ACEPTAR para contactar por WhatsApp\n' +
+        'Presiona CANCELAR para ir a la versión de respaldo'
+      );
+
+      if (userWantsHelp) {
+        // Abrir WhatsApp con mensaje predefinido
+        const whatsappUrl = 'https://wa.me/521XXXXXXXXXX?text=' + encodeURIComponent(
+          'Hola! El AR de Fireflies está fallando en mi dispositivo. '
+          + 'Aquí te envío 3 fotos de mi postal en diferentes posiciones para que actualices el archivo .mind. '
+          + 'Esto está fallando 😢'
+        );
+        window.open(whatsappUrl, '_blank');
+      }
     }
 
     function createStars() {
@@ -557,7 +586,7 @@
       }
     }, 15000);
 
-    fetch('./postal.mind', { method: 'HEAD' })
+    fetch('./assets/postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
           clearTimeout(errorTimeout);
@@ -626,6 +655,14 @@
         statusDiv.style.borderColor = 'rgba(255, 105, 180, 0.25)';
       }
     });
+
+    // Botón de redirección manual al fallback
+    const fallbackRedirectBtn = document.getElementById('fallbackRedirectBtn');
+    if (fallbackRedirectBtn) {
+      fallbackRedirectBtn.addEventListener('click', () => {
+        window.location.href = 'respaldo.html';
+      });
+    }
 
     setTimeout(() => {
       if (loadingDiv.style.display !== 'none' && !arInitialized) {
