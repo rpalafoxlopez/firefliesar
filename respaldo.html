@@ -813,7 +813,261 @@
     @media (max-width: 768px) {
       .stars-overlay { display: none; }
     }
-  </style>
+  
+    /* ===== BOTONES DE APOYO ===== */
+    .support-section {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+      background: linear-gradient(to top, rgba(10, 0, 20, 0.95), transparent);
+      pointer-events: none;
+    }
+
+    .support-section > * {
+      pointer-events: auto;
+    }
+
+    .support-btn {
+      background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #da70d6 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Exo 2', sans-serif;
+      box-shadow: 0 4px 20px rgba(255, 20, 147, 0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .support-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .support-btn:hover::before {
+      left: 100%;
+    }
+
+    .support-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(255, 20, 147, 0.6);
+    }
+
+    .support-btn.money {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+      color: #1a001a;
+    }
+
+    .support-btn.money:hover {
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #1a001a 0%, #330033 50%, #1a0a2e 100%);
+      border-radius: 25px;
+      border: 2px solid rgba(255, 105, 180, 0.4);
+      padding: 35px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(255, 20, 147, 0.3);
+      animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 20, 147, 0.1) 0%, transparent 70%);
+      animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 105, 180, 0.2);
+      border: none;
+      color: #ff69b4;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 105, 180, 0.4);
+      transform: rotate(90deg);
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      color: #ff69b4;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+      position: relative;
+      z-index: 5;
+    }
+
+    .modal-text {
+      font-size: 1rem;
+      color: #e0b0d0;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .modal-text .sad {
+      font-size: 1.3rem;
+      color: #ff6b9d;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .link-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 105, 180, 0.3);
+      color: #ffb6e6;
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-family: 'Exo 2', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .link-btn:hover {
+      background: rgba(255, 20, 147, 0.2);
+      border-color: #ff69b4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 20, 147, 0.2);
+    }
+
+    .modal-footer {
+      font-size: 0.9rem;
+      color: #8899aa;
+      position: relative;
+      z-index: 5;
+    }
+
+    .modal-footer a {
+      color: #ff69b4;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .modal-footer a:hover {
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    .wink {
+      display: inline-block;
+      animation: wink 2s ease-in-out infinite;
+    }
+
+    @keyframes wink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+
+    @media (max-width: 768px) {
+      .support-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .links-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-content {
+        padding: 25px 20px;
+      }
+    }
+</style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -1246,7 +1500,97 @@
       el.style.transition = `all 0.6s ease ${index * 0.1}s`;
       observer.observe(el);
     });
-  </script>
+  
+    // ===== MODAL FUNCTIONS =====
+    function openModal(type) {
+      const overlay = document.getElementById('modalOverlay');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
+    function closeModal() {
+      const overlay = document.getElementById('modalOverlay');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        closeModal();
+      }
+    });
+
+    // Cerrar con ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // ===== VIDEOS DE YOUTUBE ALEATORIOS =====
+    // Agrega aquí los IDs de los videos de YouTube que quieras
+    const youtubeVideos = [
+      'kJQP7kiw5Fk',  // Ejemplo: Despacito
+      '13ZIQ_scxSs',
+      'w08-qjKt5SI',
+      'HXflK8PgAwg',
+      'DInuHQGpe_0',
+      't0t_PguUyLI',
+      'SgPZDxR-FNE',
+      '6h-sEV6uNxo',
+      '7XPGU7dmZXg',
+      'IGMabBGydC0',
+      'iYYRH4apXDo',
+      'aQUlA8Hcv4s',
+      'MPkifgKBacs',
+    ];
+
+    function randomYouTube() {
+      if (youtubeVideos.length === 0) {
+        alert('⚠️ No hay videos configurados. Agrega IDs de YouTube en el array.');
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * youtubeVideos.length);
+      const videoId = youtubeVideos[randomIndex];
+      const youtubeUrl = 'https://www.youtube.com/watch?v=' + videoId;
+      window.open(youtubeUrl, '_blank');
+    }
+</script>
+
+
+  <!-- ===== BOTONES DE APOYO ===== -->
+  <div class="support-section">
+    <button class="support-btn money" onclick="openModal('money')">
+      💰 ¿20 pesos?
+    </button>
+    <button class="support-btn" onclick="randomYouTube()">
+      💡 ¿Un consejo millonario?, ¿really?
+    </button>
+  </div>
+
+  <!-- ===== MODAL ===== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3 class="modal-title">✨ Sorpresa ✨</h3>
+      <div class="modal-text">
+        <span class="sad">No hay 20, très triste :(</span>
+        Pero hay páginas interesantes
+      </div>
+      <div class="links-grid">
+        <a href="https://sobrief.com" class="link-btn" target="_blank">📚 sobrief.com</a>
+        <a href="https://tv.garden" class="link-btn" target="_blank">📺 tv.garden</a>
+        <a href="https://superlogout.com" class="link-btn" target="_blank">🚪 superlogout.com</a>
+        <a href="https://photext.shop" class="link-btn" target="_blank">🖼️ photext.shop</a>
+        <a href="https://upscayl.org" class="link-btn" target="_blank" style="grid-column: 1 / -1;">🔍 upscayl.org</a>
+      </div>
+      <div class="modal-footer">
+        :P No sé qué pensabas encontrar pero si quieres conocer más de mi trabajo,<br>
+        sígueme en <a href="https://github.com/rpalafoxlopez" target="_blank">GitHub</a>, 
+        guiño <span class="wink">😉</span>, guiño <span class="wink">😉</span>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
