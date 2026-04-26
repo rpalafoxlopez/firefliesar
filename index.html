@@ -424,7 +424,7 @@
   </div>
 
   <a-scene
-    mindar-image="imageTargetSrc: /public/postal.mind; autoInitialize: true; maxTrack: 3; uiLoading: no; uiScanning: no; uiError: no;"
+    mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/rpalafoxlopez/firefliesar@main/public/postal.mind; autoInitialize: true; maxTrack: 3; uiLoading: no; uiScanning: no; uiError: no;"
     vr-mode-ui="enabled: false"
     renderer="antialias: true; alpha: true; colorManagement: true;"
     device-orientation-permission-ui="enabled: false"
@@ -609,7 +609,7 @@
       }
     }, 30000);
 
-    fetch('/postal.mind', { method: 'HEAD' })
+    fetch('https://cdn.jsdelivr.net/gh/rpalafoxlopez/firefliesar@main/public/postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
           clearTimeout(errorTimeout);
