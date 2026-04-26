@@ -22,7 +22,6 @@
       z-index: 1 !important;
     }
 
-    /* Forzar video de cámara a pantalla completa */
     video {
       width: 100vw !important;
       height: 100vh !important;
@@ -75,6 +74,7 @@
       box-shadow: 0 0 10px rgba(255, 20, 147, 0.15);
     }
 
+    /* ===== BOTÓN DE MÚSICA (aparece cuando AR está listo) ===== */
     .music-btn {
       position: absolute;
       top: 70px;
@@ -90,11 +90,75 @@
       font-weight: bold;
       box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
       transition: transform 0.2s, box-shadow 0.2s;
+      display: none;
     }
 
     .music-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 20px rgba(255, 20, 147, 0.6);
+    }
+
+    /* ===== BOTÓN MODO MANUAL (cambia de color) ===== */
+    .manual-mode-btn {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      z-index: 101;
+      /* ROJO por defecto (modo normal) */
+      background: linear-gradient(135deg, #ff4444, #ff6666);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.5s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .manual-mode-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Verde cuando está listo / a los 10 segundos */
+    .manual-mode-btn.ready {
+      background: linear-gradient(135deg, #00cc66, #33dd77);
+      box-shadow: 0 4px 15px rgba(0, 204, 102, 0.4);
+    }
+
+    .manual-mode-btn.ready:hover {
+      box-shadow: 0 6px 20px rgba(0, 204, 102, 0.6);
+    }
+
+    /* ===== BOTÓN MODO WEB (siempre visible) ===== */
+    .web-mode-btn {
+      position: absolute;
+      bottom: 130px;
+      right: 20px;
+      z-index: 101;
+      background: rgba(20, 0, 30, 0.7);
+      color: #ffb6e6;
+      border: 1px solid rgba(255, 105, 180, 0.4);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .web-mode-btn:hover {
+      background: rgba(255, 105, 180, 0.2);
+      border-color: #ff69b4;
+      transform: scale(1.05);
     }
 
     .spotify-card {
@@ -127,7 +191,7 @@
       background: rgba(255, 105, 180, 0.4);
     }
 
-    /* ===== MARCO DE ESCANEO CENTRADO Y TRANSPARENTE ===== */
+    /* ===== MARCO DE ESCANEO ===== */
     .scan-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -151,7 +215,6 @@
       opacity: 1;
     }
 
-    /* Esquinas del marco - solo líneas, sin fondo */
     .scan-corner {
       position: absolute;
       width: 50px;
@@ -164,7 +227,6 @@
     .scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 20px; }
     .scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 20px 0; }
 
-    /* Línea de escaneo */
     .scan-line {
       position: absolute;
       top: 0;
@@ -182,7 +244,6 @@
       50% { top: 95%; opacity: 1; }
     }
 
-    /* Puntos de esquina animados */
     .scan-dot {
       position: absolute;
       width: 10px;
@@ -202,7 +263,6 @@
       50% { transform: scale(1.6); opacity: 1; }
     }
 
-    /* Texto dentro del marco */
     .scan-text {
       position: absolute;
       bottom: -40px;
@@ -276,28 +336,6 @@
       border-radius: 20px;
       border: 1px solid rgba(255, 105, 180, 0.3);
       backdrop-filter: blur(10px);
-    }
-
-    /* ===== BOTÓN MODO WEB (accesible siempre) ===== */
-    .web-mode-btn {
-      position: absolute;
-      bottom: 80px;
-      right: 20px;
-      z-index: 101;
-      background: rgba(20, 0, 30, 0.7);
-      color: #ffb6e6;
-      border: 1px solid rgba(255, 105, 180, 0.4);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      text-decoration: none;
-      backdrop-filter: blur(5px);
-      transition: all 0.2s;
-    }
-    .web-mode-btn:hover {
-      background: rgba(255, 105, 180, 0.2);
-      border-color: #ff69b4;
     }
 
     /* ===== CONTENEDOR DE RESPALDO ===== */
@@ -435,9 +473,6 @@
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 <base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
@@ -464,7 +499,6 @@
       ✨ Modo libre activado<br>
       <span style="font-size: 13px; color: #ffb6e6;">Toca las estrellas para interactuar</span>
     </div>
-    <!-- Las estrellas se generan con JS -->
   </div>
 
   <!-- Checkmark de detección -->
@@ -474,9 +508,18 @@
 
   <div id="scan-status" style="display: none;">📷 Esperando detección...</div>
 
-  <button class="music-btn" id="musicBtn" style="display: none;">🎵 Música</button>
+  <!-- BOTÓN DE MÚSICA: aparece cuando AR está listo -->
+  <button class="music-btn" id="musicBtn">🎵 Música</button>
 
-  <a href="respaldo.html" class="web-mode-btn">🌐 Modo web</a>
+  <!-- BOTÓN MODO MANUAL: visible desde el inicio, ROJO por defecto -->
+  <button class="manual-mode-btn" id="manualModeBtn">
+    🎮 Modo Manual
+  </button>
+
+  <!-- BOTÓN MODO WEB: siempre visible -->
+  <a href="respaldo.html" class="web-mode-btn" id="webModeBtn">
+    🌐 Modo Web
+  </a>
 
   <div class="spotify-card" id="spotifyCard">
     <button class="close-spotify" id="closeSpotifyBtn">✕</button>
@@ -520,7 +563,6 @@
 
     <!-- ===== MODELO 3D PROCEDURAL: PLÉYADES ===== -->
     <a-entity id="pleyades-cluster" mindar-image-target="targetIndex: 0">
-      <!-- Texto principal -->
       <a-text
         value="✨ PLÉYADES (M45) ✨"
         position="0 1.2 0"
@@ -532,55 +574,46 @@
         font="mozillavr"
       ></a-text>
 
-      <!-- Estrella central: Alcyone -->
       <a-sphere radius="0.12" position="0 0 0" 
                 material="emissive: #ff69b4; emissiveIntensity: 2; color: #ffb6e6"
                 animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000">
       </a-sphere>
 
-      <!-- Atlas -->
       <a-sphere radius="0.08" position="-0.4 0.2 0.1" 
                 material="emissive: #da70d6; emissiveIntensity: 1.5; color: #e6e6fa"
                 animation="property: scale; to: 1.15 1.15 1.15; dir: alternate; loop: true; dur: 2500; delay: 300">
       </a-sphere>
 
-      <!-- Electra -->
       <a-sphere radius="0.07" position="0.35 0.15 -0.1" 
                 material="emissive: #ff1493; emissiveIntensity: 1.3; color: #ffb6c1"
                 animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 2200; delay: 500">
       </a-sphere>
 
-      <!-- Maia -->
       <a-sphere radius="0.065" position="-0.2 -0.3 0.2" 
                 material="emissive: #dda0dd; emissiveIntensity: 1.4; color: #f0e6ff"
                 animation="property: scale; to: 1.12 1.12 1.12; dir: alternate; loop: true; dur: 2800; delay: 700">
       </a-sphere>
 
-      <!-- Merope -->
       <a-sphere radius="0.06" position="0.5 -0.1 0.15" 
                 material="emissive: #ff69b4; emissiveIntensity: 1.2; color: #ffe4e1"
                 animation="property: scale; to: 1.08 1.08 1.08; dir: alternate; loop: true; dur: 2400; delay: 200">
       </a-sphere>
 
-      <!-- Taygeta -->
       <a-sphere radius="0.055" position="-0.5 0.4 -0.2" 
                 material="emissive: #da70d6; emissiveIntensity: 1.1; color: #e0ffff"
                 animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 2600; delay: 400">
       </a-sphere>
 
-      <!-- Pleione -->
       <a-sphere radius="0.05" position="0.15 0.35 -0.15" 
                 material="emissive: #ff1493; emissiveIntensity: 1; color: #fff0f5"
                 animation="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 2300; delay: 600">
       </a-sphere>
 
-      <!-- Celaeno -->
       <a-sphere radius="0.045" position="-0.35 -0.2 -0.1" 
                 material="emissive: #dda0dd; emissiveIntensity: 0.9; color: #f5f5ff"
                 animation="property: scale; to: 1.06 1.06 1.06; dir: alternate; loop: true; dur: 2700; delay: 800">
       </a-sphere>
 
-      <!-- Estrellas pequeñas de fondo -->
       <a-sphere radius="0.02" position="0.2 0.5 0.3" material="emissive: #fff; emissiveIntensity: 0.8; color: #fff"></a-sphere>
       <a-sphere radius="0.015" position="-0.6 0.1 0.25" material="emissive: #ffb6e6; emissiveIntensity: 0.7; color: #ffb6e6"></a-sphere>
       <a-sphere radius="0.018" position="0.6 -0.3 0.1" material="emissive: #da70d6; emissiveIntensity: 0.6; color: #da70d6"></a-sphere>
@@ -588,19 +621,16 @@
       <a-sphere radius="0.016" position="0.45 0.45 -0.3" material="emissive: #fff; emissiveIntensity: 0.7; color: #fff"></a-sphere>
       <a-sphere radius="0.02" position="-0.55 -0.4 0.15" material="emissive: #dda0dd; emissiveIntensity: 0.8; color: #dda0dd"></a-sphere>
 
-      <!-- Nebulosa (esfera translúcida grande) -->
       <a-sphere radius="0.8" position="0 0 0" 
                 material="emissive: #ff69b4; emissiveIntensity: 0.15; color: #ff69b4; transparent: true; opacity: 0.3"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 60000; easing: linear">
       </a-sphere>
 
-      <!-- Rotación del cúmulo completo -->
       <a-animation attribute="rotation" to="0 360 0" loop="true" dur="40000" easing="linear"></a-animation>
     </a-entity>
 
-    <!-- ===== TARGET 1: Variación ángulo ===== -->
+    <!-- ===== TARGET 1 ===== -->
     <a-entity mindar-image-target="targetIndex: 1">
-      <!-- Mismo modelo procedural -->
       <a-text value="✨ PLÉYADES (M45) ✨" position="0 1.2 0" align="center" scale="1.2 1.2 1.2" color="#ff69b4" background="true" background-opacity="0.5" font="mozillavr"></a-text>
       <a-sphere radius="0.12" position="0 0 0" material="emissive: #ff69b4; emissiveIntensity: 2; color: #ffb6e6" animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000"></a-sphere>
       <a-sphere radius="0.08" position="-0.4 0.2 0.1" material="emissive: #da70d6; emissiveIntensity: 1.5; color: #e6e6fa" animation="property: scale; to: 1.15 1.15 1.15; dir: alternate; loop: true; dur: 2500; delay: 300"></a-sphere>
@@ -613,9 +643,8 @@
       <a-sphere radius="0.8" position="0 0 0" material="emissive: #ff69b4; emissiveIntensity: 0.15; color: #ff69b4; transparent: true; opacity: 0.3" animation="property: rotation; to: 0 360 0; loop: true; dur: 60000; easing: linear"></a-sphere>
     </a-entity>
 
-    <!-- ===== TARGET 2: Variación distancia ===== -->
+    <!-- ===== TARGET 2 ===== -->
     <a-entity mindar-image-target="targetIndex: 2">
-      <!-- Mismo modelo procedural -->
       <a-text value="✨ PLÉYADES (M45) ✨" position="0 1.2 0" align="center" scale="1.2 1.2 1.2" color="#ff69b4" background="true" background-opacity="0.5" font="mozillavr"></a-text>
       <a-sphere radius="0.12" position="0 0 0" material="emissive: #ff69b4; emissiveIntensity: 2; color: #ffb6e6" animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 2000"></a-sphere>
       <a-sphere radius="0.08" position="-0.4 0.2 0.1" material="emissive: #da70d6; emissiveIntensity: 1.5; color: #e6e6fa" animation="property: scale; to: 1.15 1.15 1.15; dir: alternate; loop: true; dur: 2500; delay: 300"></a-sphere>
@@ -631,6 +660,8 @@
 
   <script>
     const musicBtn = document.getElementById('musicBtn');
+    const manualModeBtn = document.getElementById('manualModeBtn');
+    const webModeBtn = document.getElementById('webModeBtn');
     const spotifyCard = document.getElementById('spotifyCard');
     const closeSpotifyBtn = document.getElementById('closeSpotifyBtn');
     const statusDiv = document.getElementById('scan-status');
@@ -652,7 +683,6 @@
       createStars();
       if (errorMsg) errorDetails.textContent = 'Error: ' + errorMsg;
 
-      // Mostrar mensaje de ayuda al usuario
       const userWantsHelp = confirm(
         '📸 Ayúdanos a mejorar!\n\n' +
         'El AR no funcionó en tu dispositivo.\n\n' +
@@ -664,11 +694,10 @@
       );
 
       if (userWantsHelp) {
-        // Abrir WhatsApp con mensaje predefinido
         const whatsappUrl = 'https://wa.me/521XXXXXXXXXX?text=' + encodeURIComponent(
-          'Hola! El AR de Fireflies está fallando en mi dispositivo. '
-          + 'Aquí te envío 3 fotos de mi postal en diferentes posiciones para que actualices el archivo .mind. '
-          + 'Esto está fallando 😢'
+          'Hola! El AR de Fireflies está fallando en mi dispositivo. ' +
+          'Aquí te envío 3 fotos de mi postal en diferentes posiciones para que actualices el archivo .mind. ' +
+          'Esto está fallando 😢'
         );
         window.open(whatsappUrl, '_blank');
       }
@@ -688,24 +717,32 @@
       }
     }
 
-    // Timeout de 30 segundos - activar modo libre con bolitas SI O SI
+    // ===== BOTÓN MODO MANUAL: cambia a verde a los 10 segundos =====
+    const greenTimeout = setTimeout(() => {
+      if (!arInitialized) {
+        console.log('⏱️ 10 segundos - Botón modo manual a VERDE');
+        manualModeBtn.classList.add('ready');
+        manualModeBtn.innerHTML = '🎮 Modo Manual Listo';
+      }
+    }, 10000);
+
+    // Timeout de 30 segundos - activar modo libre
     const freeModeTimeout = setTimeout(() => {
       if (!arInitialized) {
-        console.log('⏱️ 30 segundos transcurridos - Activando modo libre');
+        console.log('⏱️ 30 segundos - Activando modo libre');
         loadingDiv.style.display = 'none';
         scanFrame.classList.remove('active');
         activateFreeMode();
       }
-    }, 10000);
+    }, 30000);
 
-    // Timeout de seguridad de 60 segundos - solo si el modo libre también falló
+    // Timeout de seguridad de 60 segundos
     setTimeout(() => {
       if (!arInitialized && !freeModeActive) {
         showFallback('El AR no pudo inicializarse después de 60 segundos.');
       }
     }, 60000);
 
-    // Verificar que postal.mind existe (no bloqueante)
     fetch('https://cdn.jsdelivr.net/gh/rpalafoxlopez/firefliesar@main/public/postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
@@ -717,6 +754,14 @@
       .catch((err) => {
         console.warn('⚠️ No se pudo verificar postal.mind:', err);
       });
+
+    // Click en botón modo manual → activa modo libre inmediatamente
+    manualModeBtn.addEventListener('click', () => {
+      console.log('🎮 Modo manual activado por usuario');
+      loadingDiv.style.display = 'none';
+      scanFrame.classList.remove('active');
+      activateFreeMode();
+    });
 
     musicBtn.addEventListener('click', () => {
       spotifyCard.style.display = 'block';
@@ -733,11 +778,15 @@
     scene.addEventListener('arReady', (e) => {
       arInitialized = true;
       clearTimeout(errorTimeout);
+      clearTimeout(greenTimeout);
       loadingDiv.style.display = 'none';
       scanFrame.classList.add('active');
       statusDiv.style.display = 'block';
       infoDiv.style.display = 'block';
       musicBtn.style.display = 'block';
+      // Botón manual también se pone verde cuando AR está listo
+      manualModeBtn.classList.add('ready');
+      manualModeBtn.innerHTML = '🎮 Modo Manual Listo';
       console.log('MindAR listo - maxTrack: 3');
     });
 
@@ -747,12 +796,10 @@
       showFallback('Error en MindAR: ' + (e.detail || 'No se pudo acceder a la cámara.'));
     });
 
-    // ===== DETECCIÓN DE MÚLTIPLES TARGETS =====
     scene.addEventListener('mindar-image-target-found', (e) => {
       const targetIndex = e.detail.targetIndex;
       detectedTargets.add(targetIndex);
 
-      // Ocultar marco de escaneo y mostrar checkmark
       scanFrame.classList.remove('active');
       detectedBadge.classList.add('show');
       setTimeout(() => detectedBadge.classList.remove('show'), 2500);
@@ -769,7 +816,6 @@
       const targetIndex = e.detail.targetIndex;
       detectedTargets.delete(targetIndex);
 
-      // Si no quedan targets detectados, mostrar marco de escaneo de nuevo
       if (detectedTargets.size === 0) {
         scanFrame.classList.add('active');
         statusDiv.innerHTML = '🔍 Buscando postal...';
@@ -779,7 +825,6 @@
       }
     });
 
-    // Botón de redirección manual al fallback
     const fallbackRedirectBtn = document.getElementById('fallbackRedirectBtn');
     if (fallbackRedirectBtn) {
       fallbackRedirectBtn.addEventListener('click', () => {
@@ -790,10 +835,14 @@
     let freeModeActive = false;
 
     function activateFreeMode() {
-      if (freeModeActive) return; // Evitar doble activación
+      if (freeModeActive) return;
 
       freeModeActive = true;
       console.log('🌟 ACTIVANDO MODO LIBRE');
+
+      // Ocultar botones al activar modo libre
+      manualModeBtn.style.display = 'none';
+      webModeBtn.style.display = 'none';
 
       const overlay = document.getElementById('freeModeOverlay');
       if (!overlay) {
@@ -803,7 +852,6 @@
 
       overlay.classList.add('active');
 
-      // Generar 15 bolitas interactivas
       const colors = ['#ff69b4', '#ff1493', '#da70d6', '#ffb6e6', '#dda0dd', '#e6e6fa', '#fff'];
       const sizes = [15, 20, 25, 30, 12, 18, 22];
       const starNames = ['Alcyone', 'Atlas', 'Electra', 'Maia', 'Merope', 'Taygeta', 'Pleione', 'Celaeno'];
@@ -814,8 +862,8 @@
 
         const size = sizes[Math.floor(Math.random() * sizes.length)];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const x = Math.random() * 80 + 10; // 10% a 90%
-        const y = Math.random() * 70 + 15; // 15% a 85%
+        const x = Math.random() * 80 + 10;
+        const y = Math.random() * 70 + 15;
         const delay = Math.random() * 4;
         const duration = 3 + Math.random() * 3;
 
@@ -831,7 +879,6 @@
           z-index: 92;
         `;
 
-        // Interacción al hacer clic/tocar
         star.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
@@ -839,7 +886,6 @@
           this.style.transform = 'scale(2)';
           this.style.boxShadow = `0 0 60px ${color}, 0 0 100px ${color}`;
 
-          // Crear efecto de partículas
           createParticleBurst(parseFloat(this.style.left), parseFloat(this.style.top), color);
 
           setTimeout(() => {
@@ -848,13 +894,11 @@
           }, 500);
         });
 
-        // Tooltip con nombre de estrella
         star.title = starNames[Math.floor(Math.random() * starNames.length)];
 
         overlay.appendChild(star);
       }
 
-      // Mostrar mensaje de modo libre
       const msg = document.createElement('div');
       msg.className = 'free-mode-text';
       msg.innerHTML = '✨ Modo libre activado<br><span style="font-size: 13px; color: #ffb6e6;">Toca las estrellas para interactuar</span>';
