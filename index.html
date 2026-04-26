@@ -19,6 +19,22 @@
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
+      z-index: 1 !important;
+    }
+
+    /* Forzar video de cámara a pantalla completa */
+    video {
+      width: 100vw !important;
+      height: 100vh !important;
+      object-fit: cover !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+    }
+
+    canvas {
+      width: 100vw !important;
+      height: 100vh !important;
     }
 
     #info {
@@ -111,7 +127,7 @@
       background: rgba(255, 105, 180, 0.4);
     }
 
-    /* ===== MARCO DE ESCANEO ANIMADO ===== */
+    /* ===== MARCO DE ESCANEO CENTRADO Y TRANSPARENTE ===== */
     .scan-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -124,8 +140,8 @@
     }
 
     .scan-frame {
-      width: 260px;
-      height: 260px;
+      width: 280px;
+      height: 280px;
       position: relative;
       opacity: 0;
       transition: opacity 0.5s;
@@ -135,72 +151,131 @@
       opacity: 1;
     }
 
-    /* Esquinas del marco */
+    /* Esquinas del marco - solo líneas, sin fondo */
     .scan-corner {
       position: absolute;
-      width: 40px;
-      height: 40px;
-      border: 3px solid #ff69b4;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 105, 180, 0.8);
+      box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
     }
-    .scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 15px 0 0 0; }
-    .scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 15px 0 0; }
-    .scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 15px; }
-    .scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 15px 0; }
+    .scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 20px 0 0 0; }
+    .scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 20px 0 0; }
+    .scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 20px; }
+    .scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 20px 0; }
 
     /* Línea de escaneo */
     .scan-line {
       position: absolute;
       top: 0;
-      left: 10%;
-      width: 80%;
-      height: 3px;
+      left: 5%;
+      width: 90%;
+      height: 2px;
       background: linear-gradient(90deg, transparent, #ff1493, #ff69b4, #ff1493, transparent);
-      box-shadow: 0 0 15px #ff1493, 0 0 30px rgba(255, 20, 147, 0.5);
-      animation: scanMove 2.5s ease-in-out infinite;
+      box-shadow: 0 0 20px #ff1493, 0 0 40px rgba(255, 20, 147, 0.6);
+      animation: scanMove 3s ease-in-out infinite;
       border-radius: 2px;
     }
 
     @keyframes scanMove {
-      0%, 100% { top: 5%; opacity: 0.6; }
+      0%, 100% { top: 5%; opacity: 0.4; }
       50% { top: 95%; opacity: 1; }
     }
 
     /* Puntos de esquina animados */
     .scan-dot {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       background: #ff1493;
       border-radius: 50%;
-      box-shadow: 0 0 10px #ff1493;
+      box-shadow: 0 0 15px #ff1493, 0 0 30px rgba(255, 20, 147, 0.6);
       animation: dotPulse 1.5s ease-in-out infinite;
     }
-    .scan-dot.tl { top: -4px; left: -4px; }
-    .scan-dot.tr { top: -4px; right: -4px; animation-delay: 0.3s; }
-    .scan-dot.bl { bottom: -4px; left: -4px; animation-delay: 0.6s; }
-    .scan-dot.br { bottom: -4px; right: -4px; animation-delay: 0.9s; }
+    .scan-dot.tl { top: -5px; left: -5px; }
+    .scan-dot.tr { top: -5px; right: -5px; animation-delay: 0.3s; }
+    .scan-dot.bl { bottom: -5px; left: -5px; animation-delay: 0.6s; }
+    .scan-dot.br { bottom: -5px; right: -5px; animation-delay: 0.9s; }
 
     @keyframes dotPulse {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.5); opacity: 1; }
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.6); opacity: 1; }
     }
 
     /* Texto dentro del marco */
     .scan-text {
       position: absolute;
-      bottom: -35px;
+      bottom: -40px;
       left: 0; right: 0;
       text-align: center;
       color: #ff69b4;
-      font-size: 13px;
+      font-size: 14px;
       font-family: monospace;
-      text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      text-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
       animation: textFade 2s ease-in-out infinite;
     }
 
     @keyframes textFade {
-      0%, 100% { opacity: 0.5; }
+      0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
+    }
+
+    /* ===== BOLITAS INTERACTIVAS (MODO LIBRE) ===== */
+    .free-mode-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 90;
+      display: none;
+      pointer-events: none;
+    }
+
+    .free-mode-overlay.active {
+      display: block;
+    }
+
+    .interactive-star {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: floatStar 4s ease-in-out infinite;
+    }
+
+    .interactive-star:hover {
+      transform: scale(1.5) !important;
+      box-shadow: 0 0 40px currentColor !important;
+    }
+
+    .interactive-star:active {
+      transform: scale(0.8) !important;
+    }
+
+    @keyframes floatStar {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(20px) rotate(-5deg); }
+    }
+
+    .free-mode-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff69b4;
+      font-size: 18px;
+      font-family: monospace;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+      pointer-events: none;
+      z-index: 91;
+      background: rgba(10, 0, 20, 0.7);
+      padding: 20px 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 105, 180, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     /* ===== BOTÓN MODO WEB (accesible siempre) ===== */
@@ -362,6 +437,7 @@
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -380,6 +456,15 @@
       <div class="scan-line"></div>
       <div class="scan-text">Apunta tu cámara a la postal</div>
     </div>
+  </div>
+
+  <!-- ===== BOLITAS INTERACTIVAS (MODO LIBRE) ===== -->
+  <div class="free-mode-overlay" id="freeModeOverlay">
+    <div class="free-mode-text">
+      ✨ Modo libre activado<br>
+      <span style="font-size: 13px; color: #ffb6e6;">Toca las estrellas para interactuar</span>
+    </div>
+    <!-- Las estrellas se generan con JS -->
   </div>
 
   <!-- Checkmark de detección -->
@@ -603,17 +688,27 @@
       }
     }
 
+    // Timeout de 30 segundos - si no detecta postal, activar modo libre con bolitas
     errorTimeout = setTimeout(() => {
       if (!arInitialized) {
-        showFallback('Timeout: El AR no pudo inicializarse en 30 segundos.');
+        // No activar fallback, en su lugar mostrar bolitas interactivas
+        loadingDiv.style.display = 'none';
+        scanFrame.classList.remove('active');
+        activateFreeMode();
       }
     }, 30000);
+
+    // Timeout de seguridad de 45 segundos - si todo falla, mostrar fallback
+    setTimeout(() => {
+      if (!arInitialized && !freeModeActive) {
+        showFallback('El AR no pudo inicializarse después de 45 segundos.');
+      }
+    }, 45000);
 
     fetch('https://cdn.jsdelivr.net/gh/rpalafoxlopez/firefliesar@main/public/postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
-          clearTimeout(errorTimeout);
-          showFallback('No se encontró el archivo postal.mind.');
+          console.warn('No se pudo verificar postal.mind en CDN');
         }
       })
       .catch(() => console.warn('No se pudo verificar postal.mind'));
@@ -685,6 +780,93 @@
       fallbackRedirectBtn.addEventListener('click', () => {
         window.location.href = 'respaldo.html';
       });
+    }
+
+    let freeModeActive = false;
+
+    function activateFreeMode() {
+      freeModeActive = true;
+      const overlay = document.getElementById('freeModeOverlay');
+      overlay.classList.add('active');
+
+      // Generar 15 bolitas interactivas
+      const colors = ['#ff69b4', '#ff1493', '#da70d6', '#ffb6e6', '#dda0dd', '#e6e6fa', '#fff'];
+      const sizes = [15, 20, 25, 30, 12, 18, 22];
+
+      for (let i = 0; i < 15; i++) {
+        const star = document.createElement('div');
+        star.className = 'interactive-star';
+
+        const size = sizes[Math.floor(Math.random() * sizes.length)];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const x = Math.random() * 90 + 5; // 5% a 95%
+        const y = Math.random() * 80 + 10; // 10% a 90%
+        const delay = Math.random() * 4;
+        const duration = 3 + Math.random() * 3;
+
+        star.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}%;
+          top: ${y}%;
+          background: radial-gradient(circle, ${color} 0%, transparent 70%);
+          box-shadow: 0 0 20px ${color}, 0 0 40px ${color}80;
+          animation-delay: ${delay}s;
+          animation-duration: ${duration}s;
+        `;
+
+        // Interacción al hacer clic
+        star.addEventListener('click', () => {
+          star.style.transform = 'scale(2)';
+          star.style.boxShadow = `0 0 60px ${color}, 0 0 100px ${color}`;
+
+          // Crear efecto de partículas
+          createParticleBurst(x, y, color);
+
+          setTimeout(() => {
+            star.style.transform = '';
+            star.style.boxShadow = '';
+          }, 500);
+        });
+
+        // Tooltip con nombre de estrella aleatorio
+        const starNames = ['Alcyone', 'Atlas', 'Electra', 'Maia', 'Merope', 'Taygeta', 'Pleione', 'Celaeno'];
+        star.title = starNames[Math.floor(Math.random() * starNames.length)];
+
+        overlay.appendChild(star);
+      }
+
+      console.log('🌟 Modo libre activado - Bolitas interactivas visibles');
+    }
+
+    function createParticleBurst(x, y, color) {
+      for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          background: ${color};
+          border-radius: 50%;
+          left: ${x}%;
+          top: ${y}%;
+          pointer-events: none;
+          box-shadow: 0 0 10px ${color};
+          transition: all 1s ease-out;
+        `;
+
+        document.getElementById('freeModeOverlay').appendChild(particle);
+
+        const angle = (Math.PI * 2 * i) / 8;
+        const distance = 50 + Math.random() * 50;
+
+        setTimeout(() => {
+          particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`;
+          particle.style.opacity = '0';
+        }, 10);
+
+        setTimeout(() => particle.remove(), 1000);
+      }
     }
 
     setTimeout(() => {
