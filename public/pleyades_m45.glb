@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Error><Code>PermanentRedirect</Code><Message>The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.</Message><Endpoint>ar-models.s3-us-west-1.amazonaws.com</Endpoint><Bucket>ar-models</Bucket><RequestId>BVEAT9PXDB1WQGQJ</RequestId><HostId>uE4N3jztgmOnZViJ4zxf5tl6TGhrYlkqH9kyBXIP+UYEYUfyHK1hqv4LdfZwudzmpBaQE1WdgCWTko3NMtsF/3NirY9qOlSQ</HostId></Error>
