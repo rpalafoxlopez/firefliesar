@@ -605,9 +605,9 @@
 
     errorTimeout = setTimeout(() => {
       if (!arInitialized) {
-        showFallback('Timeout: El AR no pudo inicializarse en 15 segundos.');
+        showFallback('Timeout: El AR no pudo inicializarse en 30 segundos.');
       }
-    }, 25000);
+    }, 30000);
 
     fetch('/postal.mind', { method: 'HEAD' })
       .then(response => {
