@@ -688,30 +688,35 @@
       }
     }
 
-    // Timeout de 30 segundos - si no detecta postal, activar modo libre con bolitas
-    errorTimeout = setTimeout(() => {
+    // Timeout de 30 segundos - activar modo libre con bolitas SI O SI
+    const freeModeTimeout = setTimeout(() => {
       if (!arInitialized) {
-        // No activar fallback, en su lugar mostrar bolitas interactivas
+        console.log('⏱️ 30 segundos transcurridos - Activando modo libre');
         loadingDiv.style.display = 'none';
         scanFrame.classList.remove('active');
         activateFreeMode();
       }
-    }, 30000);
+    }, 10000);
 
-    // Timeout de seguridad de 45 segundos - si todo falla, mostrar fallback
+    // Timeout de seguridad de 60 segundos - solo si el modo libre también falló
     setTimeout(() => {
       if (!arInitialized && !freeModeActive) {
-        showFallback('El AR no pudo inicializarse después de 45 segundos.');
+        showFallback('El AR no pudo inicializarse después de 60 segundos.');
       }
-    }, 45000);
+    }, 60000);
 
+    // Verificar que postal.mind existe (no bloqueante)
     fetch('https://cdn.jsdelivr.net/gh/rpalafoxlopez/firefliesar@main/public/postal.mind', { method: 'HEAD' })
       .then(response => {
         if (!response.ok) {
-          console.warn('No se pudo verificar postal.mind en CDN');
+          console.warn('⚠️ postal.mind no encontrado en CDN');
+        } else {
+          console.log('✅ postal.mind verificado en CDN');
         }
       })
-      .catch(() => console.warn('No se pudo verificar postal.mind'));
+      .catch((err) => {
+        console.warn('⚠️ No se pudo verificar postal.mind:', err);
+      });
 
     musicBtn.addEventListener('click', () => {
       spotifyCard.style.display = 'block';
@@ -785,13 +790,23 @@
     let freeModeActive = false;
 
     function activateFreeMode() {
+      if (freeModeActive) return; // Evitar doble activación
+
       freeModeActive = true;
+      console.log('🌟 ACTIVANDO MODO LIBRE');
+
       const overlay = document.getElementById('freeModeOverlay');
+      if (!overlay) {
+        console.error('❌ No se encontró freeModeOverlay');
+        return;
+      }
+
       overlay.classList.add('active');
 
       // Generar 15 bolitas interactivas
       const colors = ['#ff69b4', '#ff1493', '#da70d6', '#ffb6e6', '#dda0dd', '#e6e6fa', '#fff'];
       const sizes = [15, 20, 25, 30, 12, 18, 22];
+      const starNames = ['Alcyone', 'Atlas', 'Electra', 'Maia', 'Merope', 'Taygeta', 'Pleione', 'Celaeno'];
 
       for (let i = 0; i < 15; i++) {
         const star = document.createElement('div');
@@ -799,8 +814,8 @@
 
         const size = sizes[Math.floor(Math.random() * sizes.length)];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const x = Math.random() * 90 + 5; // 5% a 95%
-        const y = Math.random() * 80 + 10; // 10% a 90%
+        const x = Math.random() * 80 + 10; // 10% a 90%
+        const y = Math.random() * 70 + 15; // 15% a 85%
         const delay = Math.random() * 4;
         const duration = 3 + Math.random() * 3;
 
@@ -813,59 +828,73 @@
           box-shadow: 0 0 20px ${color}, 0 0 40px ${color}80;
           animation-delay: ${delay}s;
           animation-duration: ${duration}s;
+          z-index: 92;
         `;
 
-        // Interacción al hacer clic
-        star.addEventListener('click', () => {
-          star.style.transform = 'scale(2)';
-          star.style.boxShadow = `0 0 60px ${color}, 0 0 100px ${color}`;
+        // Interacción al hacer clic/tocar
+        star.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          this.style.transform = 'scale(2)';
+          this.style.boxShadow = `0 0 60px ${color}, 0 0 100px ${color}`;
 
           // Crear efecto de partículas
-          createParticleBurst(x, y, color);
+          createParticleBurst(parseFloat(this.style.left), parseFloat(this.style.top), color);
 
           setTimeout(() => {
-            star.style.transform = '';
-            star.style.boxShadow = '';
+            this.style.transform = '';
+            this.style.boxShadow = '';
           }, 500);
         });
 
-        // Tooltip con nombre de estrella aleatorio
-        const starNames = ['Alcyone', 'Atlas', 'Electra', 'Maia', 'Merope', 'Taygeta', 'Pleione', 'Celaeno'];
+        // Tooltip con nombre de estrella
         star.title = starNames[Math.floor(Math.random() * starNames.length)];
 
         overlay.appendChild(star);
       }
 
-      console.log('🌟 Modo libre activado - Bolitas interactivas visibles');
+      // Mostrar mensaje de modo libre
+      const msg = document.createElement('div');
+      msg.className = 'free-mode-text';
+      msg.innerHTML = '✨ Modo libre activado<br><span style="font-size: 13px; color: #ffb6e6;">Toca las estrellas para interactuar</span>';
+      msg.style.top = '10%';
+      overlay.appendChild(msg);
+
+      console.log('✅ Modo libre activado - ' + overlay.querySelectorAll('.interactive-star').length + ' estrellas creadas');
     }
 
     function createParticleBurst(x, y, color) {
+      const overlay = document.getElementById('freeModeOverlay');
+      if (!overlay) return;
+
       for (let i = 0; i < 8; i++) {
         const particle = document.createElement('div');
         particle.style.cssText = `
           position: absolute;
-          width: 6px;
-          height: 6px;
+          width: 8px;
+          height: 8px;
           background: ${color};
           border-radius: 50%;
           left: ${x}%;
           top: ${y}%;
           pointer-events: none;
-          box-shadow: 0 0 10px ${color};
-          transition: all 1s ease-out;
+          box-shadow: 0 0 15px ${color}, 0 0 30px ${color}80;
+          transition: all 0.8s ease-out;
+          z-index: 93;
         `;
 
-        document.getElementById('freeModeOverlay').appendChild(particle);
+        overlay.appendChild(particle);
 
         const angle = (Math.PI * 2 * i) / 8;
-        const distance = 50 + Math.random() * 50;
+        const distance = 60 + Math.random() * 80;
 
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`;
           particle.style.opacity = '0';
-        }, 10);
+        });
 
-        setTimeout(() => particle.remove(), 1000);
+        setTimeout(() => particle.remove(), 800);
       }
     }
 
